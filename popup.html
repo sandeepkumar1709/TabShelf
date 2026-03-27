@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>TabCache</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        padding: 12px;
+        font: 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        width: 360px;
+      }
+      .title {
+        font-weight: 650;
+        margin-bottom: 10px;
+      }
+      fieldset {
+        border: 1px solid rgba(127, 127, 127, 0.35);
+        border-radius: 10px;
+        padding: 10px;
+        margin: 0 0 10px 0;
+      }
+      legend {
+        padding: 0 6px;
+        opacity: 0.9;
+      }
+      label {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 6px 0;
+        cursor: pointer;
+        user-select: none;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-top: 8px;
+      }
+      button {
+        appearance: none;
+        border: 1px solid rgba(127, 127, 127, 0.4);
+        background: rgba(127, 127, 127, 0.12);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .muted {
+        opacity: 0.75;
+      }
+      .status {
+        margin-top: 10px;
+        min-height: 18px;
+      }
+      .list {
+        margin-top: 10px;
+        border: 1px solid rgba(127, 127, 127, 0.25);
+        border-radius: 10px;
+        padding: 8px;
+        max-height: 180px;
+        overflow: auto;
+        background: rgba(127, 127, 127, 0.06);
+      }
+      .item {
+        padding: 6px 0;
+        border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+      }
+      .item:last-child {
+        border-bottom: none;
+      }
+      .t {
+        font-weight: 600;
+        margin-bottom: 2px;
+        word-break: break-word;
+      }
+      .u {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        opacity: 0.85;
+        word-break: break-all;
+      }
+      .pill {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid rgba(127, 127, 127, 0.25);
+        background: rgba(127, 127, 127, 0.08);
+        font-size: 12px;
+      }
+      input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid rgba(127, 127, 127, 0.35);
+        background: rgba(127, 127, 127, 0.06);
+        font: inherit;
+      }
+      a.link {
+        color: inherit;
+        text-decoration: underline;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title">TabCache</div>
+
+    <fieldset>
+      <legend>Scope</legend>
+      <label>
+        <input type="radio" name="scope" value="currentTab" checked />
+        <span>Current tab</span>
+      </label>
+      <label>
+        <input type="radio" name="scope" value="currentWindow" />
+        <span>Current window</span>
+      </label>
+      <label>
+        <input type="radio" name="scope" value="allWindows" />
+        <span>All windows</span>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Session name</legend>
+      <input id="sessionName" type="text" placeholder="Session name" />
+    </fieldset>
+
+    <div class="row">
+      <label class="muted" style="padding: 0">
+        <input id="confirm" type="checkbox" checked />
+        <span>Confirm before closing</span>
+      </label>
+      <button id="run">Save session & close</button>
+    </div>
+
+    <div class="row" style="margin-top: 10px">
+      <span class="muted">Manage saved sessions</span>
+      <a class="link" id="manage" href="#">Open</a>
+    </div>
+
+    <div class="status" id="status"></div>
+    <div id="preview"></div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>
+

@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "TabCache",
+  "description": "Collect basic info about tabs and close them by scope.",
+  "version": "0.1.0",
+  "action": {
+    "default_title": "TabCache",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["tabs", "storage"]
+}
+
