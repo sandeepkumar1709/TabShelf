@@ -2,7 +2,7 @@
 
 A Chrome extension that saves your tab sessions and uses **Google Gemini** to auto-name them and cluster saved tabs into smart, AI-generated topic groups.
 
-Built for the **GDSC HackDay "Build With AI"** hackathon. 
+Built for the **GDSC HackDay "Build With AI"** hackathon.
 
 Targeting: **Best App for Developer Productivity** & **Best Use of Gemini**.
 
@@ -15,7 +15,7 @@ Targeting: **Best App for Developer Productivity** & **Best Use of Gemini**.
 
 ## 🚀 How to Install & Run Locally
 
-1. Clone this repository: `git clone https://github.com/yourusername/TabCache.git`
+1. Clone this repository: `git clone https://github.com/sandeepkumar1709/TabShelf.git`
 2. Open Google Chrome and navigate to `chrome://extensions/`
 3. Toggle on **Developer Mode** in the top right corner.
 4. Click **Load unpacked** and select the `TabCache` directory.
@@ -24,17 +24,20 @@ Targeting: **Best App for Developer Productivity** & **Best Use of Gemini**.
 ## ⚙️ AI Setup
 
 To use the AI features, you need a free Google Gemini API key:
+
 1. Get a free API key at [Google AI Studio](https://aistudio.google.com/app/apikey).
 2. Paste it into the TabCache Settings page.
 3. Toggle "Enable AI features" to ON.
 
 ## 🛠️ Built With
+
 - Vanilla JavaScript, HTML5, CSS3
 - Chrome Extensions API (Manifest V3)
 - Google Gemini 2.5 Flash API (`generativelanguage.googleapis.com`)
 - Structured JSON Output (`responseSchema`)
 
 ## 💡 What's Next
+
 - **Secure Backend:** A dedicated server to authenticate API calls without requiring users to provide their own keys.
 - **Deep Research Summarization:** Using Gemini to summarize the actual text content of saved tabs.
 - **Workspace Linking:** Auto-restoring specific tab groups when switching Git branches in an IDE.
