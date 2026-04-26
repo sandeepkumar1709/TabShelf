@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "TabCache",
-  "description": "Collect basic info about tabs and close them by scope.",
-  "version": "0.1.0",
+  "description": "Save & restore tab sessions, with Gemini-powered auto-naming and smart grouping.",
+  "version": "0.2.0",
   "action": {
     "default_title": "TabCache",
     "default_popup": "popup.html"
@@ -10,6 +10,6 @@
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["tabs", "storage"]
+  "permissions": ["tabs", "storage", "favicon"],
+  "host_permissions": ["https://generativelanguage.googleapis.com/*"]
 }
-

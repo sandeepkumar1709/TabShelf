@@ -1,1 +1,13 @@
-File_Map.md
+# Missing OS files
+.DS_Store
+Thumbs.db
+
+# Any AI or editor specific files
+.vscode/
+.idea/
+.cursor/
+.gemini/
+
+CLAUDE.md
+
+FILE_MAP.md

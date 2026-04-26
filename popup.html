@@ -7,154 +7,343 @@
     <style>
       :root {
         color-scheme: light dark;
+        --accent: #6366f1;
+        --accent-strong: #4f46e5;
+        --accent-soft: rgba(99, 102, 241, 0.12);
+        --accent-ring: rgba(99, 102, 241, 0.35);
+        --on-accent: #fff;
+        --bg-elev: rgba(127, 127, 127, 0.06);
+        --bg-hover: rgba(127, 127, 127, 0.12);
+        --border: rgba(127, 127, 127, 0.20);
+        --border-strong: rgba(127, 127, 127, 0.34);
+        --muted: 0.66;
+        --r-sm: 6px;
+        --r-md: 10px;
+        --r-lg: 14px;
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
-        padding: 12px;
-        font: 13px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        padding: 16px 16px 14px;
+        font: 13.5px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         width: 360px;
+        color: inherit;
       }
-      .title {
-        font-weight: 650;
-        margin-bottom: 10px;
+      .brand {
+        margin-bottom: 14px;
       }
-      fieldset {
-        border: 1px solid rgba(127, 127, 127, 0.35);
-        border-radius: 10px;
-        padding: 10px;
-        margin: 0 0 10px 0;
+      .brand .name {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
       }
-      legend {
-        padding: 0 6px;
-        opacity: 0.9;
+      .brand .sub {
+        opacity: var(--muted);
+        font-size: 12px;
       }
-      label {
+      .cardLabel {
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 10.5px;
+        font-weight: 700;
+        opacity: var(--muted);
+        margin-bottom: 6px;
+      }
+      .section {
+        margin-bottom: 12px;
+      }
+      .tiles {
         display: flex;
-        gap: 8px;
-        align-items: center;
-        padding: 6px 0;
-        cursor: pointer;
-        user-select: none;
+        flex-direction: column;
+        gap: 6px;
       }
-      .row {
+      .tile {
+        appearance: none;
+        text-align: left;
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 10px 12px;
+        cursor: pointer;
+        font: inherit;
+        color: inherit;
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 10px;
-        margin-top: 8px;
+        transition: background 80ms ease, border-color 80ms ease, box-shadow 80ms ease;
       }
-      button {
-        appearance: none;
-        border: 1px solid rgba(127, 127, 127, 0.4);
-        background: rgba(127, 127, 127, 0.12);
-        border-radius: 10px;
-        padding: 8px 10px;
+      .tile:hover {
+        background: var(--bg-hover);
+      }
+      .tile.selected {
+        border-color: var(--accent);
+        background: var(--accent-soft);
+        box-shadow: 0 0 0 3px var(--accent-ring);
+      }
+      .tile.empty {
+        opacity: 0.55;
+      }
+      .tile .label {
         font-weight: 600;
-        cursor: pointer;
       }
-      button:disabled {
-        opacity: 0.6;
+      .tile .count {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 12px;
+        opacity: 0.85;
+      }
+      .tile.selected .count {
+        color: var(--accent-strong);
+        opacity: 1;
+        font-weight: 700;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 9px 11px;
+        border-radius: var(--r-md);
+        border: 1px solid var(--border-strong);
+        background: var(--bg-elev);
+        font: inherit;
+        color: inherit;
+      }
+      input[type="text"]:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-ring);
+      }
+      .nameRow {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .nameRow input {
+        flex: 1;
+      }
+      .iconBtn {
+        appearance: none;
+        background: var(--bg-elev);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 8px 10px;
+        cursor: pointer;
+        font-size: 15px;
+        line-height: 1;
+        color: inherit;
+        transition: background 80ms ease, border-color 80ms ease;
+      }
+      .iconBtn:hover:not(:disabled) {
+        background: var(--bg-hover);
+        border-color: var(--accent);
+      }
+      .iconBtn:disabled {
+        opacity: 0.4;
         cursor: not-allowed;
       }
-      .muted {
-        opacity: 0.75;
+      .iconBtn.loading {
+        animation: pulse 1s infinite;
+      }
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+      .check {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        cursor: pointer;
+        user-select: none;
+        font-size: 13px;
+        margin: 4px 0 12px;
+      }
+      .check input {
+        appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1.5px solid var(--border-strong);
+        background: var(--bg-elev);
+        cursor: pointer;
+        position: relative;
+        flex: 0 0 16px;
+        transition: background 80ms ease, border-color 80ms ease;
+      }
+      .check input:checked {
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+      .check input:checked::after {
+        content: "";
+        position: absolute;
+        top: 1px;
+        left: 4px;
+        width: 4px;
+        height: 8px;
+        border: solid var(--on-accent);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+      .check input:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px var(--accent-ring);
+      }
+      .cta {
+        appearance: none;
+        width: 100%;
+        background: var(--accent);
+        color: var(--on-accent);
+        border: none;
+        border-radius: var(--r-md);
+        padding: 11px 14px;
+        font: inherit;
+        font-weight: 650;
+        cursor: pointer;
+        transition: background 80ms ease, opacity 80ms ease;
+      }
+      .cta:hover:not(:disabled) {
+        background: var(--accent-strong);
+      }
+      .cta:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      .footRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 12px;
+        font-size: 12.5px;
+      }
+      .footRow .muted {
+        opacity: var(--muted);
+      }
+      .link {
+        color: var(--accent);
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .link:hover {
+        text-decoration: underline;
       }
       .status {
         margin-top: 10px;
         min-height: 18px;
+        font-size: 12.5px;
+        opacity: 0.85;
+      }
+      .status[data-kind="error"] {
+        color: #dc2626;
+        opacity: 1;
+      }
+      .preview {
+        margin-top: 10px;
+      }
+      .previewHead {
+        display: flex;
+        gap: 6px;
+        margin-bottom: 6px;
+      }
+      .pill {
+        display: inline-block;
+        padding: 2px 9px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        font-size: 11.5px;
       }
       .list {
-        margin-top: 10px;
-        border: 1px solid rgba(127, 127, 127, 0.25);
-        border-radius: 10px;
-        padding: 8px;
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 6px 8px;
         max-height: 180px;
         overflow: auto;
-        background: rgba(127, 127, 127, 0.06);
+        background: var(--bg-elev);
       }
       .item {
         padding: 6px 0;
-        border-bottom: 1px solid rgba(127, 127, 127, 0.18);
+        border-bottom: 1px solid var(--border);
       }
       .item:last-child {
         border-bottom: none;
       }
-      .t {
+      .item .t {
         font-weight: 600;
-        margin-bottom: 2px;
+        font-size: 12.5px;
         word-break: break-word;
       }
-      .u {
+      .item .u {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-        font-size: 12px;
-        opacity: 0.85;
+        font-size: 11.5px;
+        opacity: 0.8;
         word-break: break-all;
       }
-      .pill {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(127, 127, 127, 0.25);
-        background: rgba(127, 127, 127, 0.08);
-        font-size: 12px;
-      }
-      input[type="text"] {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 8px 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(127, 127, 127, 0.35);
-        background: rgba(127, 127, 127, 0.06);
-        font: inherit;
-      }
-      a.link {
+      .item a {
         color: inherit;
+        text-decoration: none;
+      }
+      .item a:hover .t {
         text-decoration: underline;
-        opacity: 0.9;
+      }
+      .skipNote {
+        margin-top: 6px;
+        font-size: 11.5px;
+        opacity: var(--muted);
       }
     </style>
   </head>
   <body>
-    <div class="title">TabCache</div>
-
-    <fieldset>
-      <legend>Scope</legend>
-      <label>
-        <input type="radio" name="scope" value="currentTab" checked />
-        <span>Current tab</span>
-      </label>
-      <label>
-        <input type="radio" name="scope" value="currentWindow" />
-        <span>Current window</span>
-      </label>
-      <label>
-        <input type="radio" name="scope" value="allWindows" />
-        <span>All windows</span>
-      </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>Session name</legend>
-      <input id="sessionName" type="text" placeholder="Session name" />
-    </fieldset>
-
-    <div class="row">
-      <label class="muted" style="padding: 0">
-        <input id="confirm" type="checkbox" checked />
-        <span>Confirm before closing</span>
-      </label>
-      <button id="run">Save session & close</button>
+    <div class="brand">
+      <div class="name">TabCache</div>
+      <div class="sub">Save &amp; close grouped tabs</div>
     </div>
 
-    <div class="row" style="margin-top: 10px">
+    <div class="section">
+      <div class="cardLabel">Scope</div>
+      <div class="tiles" id="tiles">
+        <button class="tile selected" data-scope="currentTab" type="button">
+          <span class="label">Current tab</span>
+          <span class="count" data-count="currentTab">·</span>
+        </button>
+        <button class="tile" data-scope="currentWindow" type="button">
+          <span class="label">Current window</span>
+          <span class="count" data-count="currentWindow">·</span>
+        </button>
+        <button class="tile" data-scope="allWindows" type="button">
+          <span class="label">All windows</span>
+          <span class="count" data-count="allWindows">·</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="cardLabel">Session name</div>
+      <div class="nameRow">
+        <input id="sessionName" type="text" placeholder="Session name" />
+        <button id="autoName" class="iconBtn" type="button" title="Auto-name with AI" style="display:none">✨</button>
+      </div>
+    </div>
+
+    <label class="check">
+      <input id="confirm" type="checkbox" checked />
+      <span>Confirm before closing</span>
+    </label>
+
+    <button class="cta" id="run" type="button">Save &amp; close</button>
+
+    <div class="footRow">
       <span class="muted">Manage saved sessions</span>
-      <a class="link" id="manage" href="#">Open</a>
+      <a class="link" id="manage" href="#">Open &rarr;</a>
+    </div>
+    <div class="footRow">
+      <span class="muted">AI settings</span>
+      <a class="link" id="openSettings" href="#">⚙ Settings</a>
     </div>
 
     <div class="status" id="status"></div>
-    <div id="preview"></div>
+    <div class="preview" id="preview"></div>
 
     <script src="popup.js"></script>
   </body>
 </html>
-

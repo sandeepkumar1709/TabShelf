@@ -3,212 +3,450 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TabCache Sessions</title>
+    <title>TabCache</title>
     <style>
       :root {
         color-scheme: light dark;
+        --accent: #6366f1;
+        --accent-strong: #4f46e5;
+        --accent-soft: rgba(99, 102, 241, 0.12);
+        --accent-ring: rgba(99, 102, 241, 0.35);
+        --on-accent: #fff;
+        --border: rgba(127, 127, 127, 0.20);
+        --border-strong: rgba(127, 127, 127, 0.34);
+        --bg-elev: rgba(127, 127, 127, 0.06);
+        --bg-hover: rgba(127, 127, 127, 0.12);
+        --muted: 0.66;
+        --danger: #dc2626;
+        --danger-soft: rgba(220, 38, 38, 0.10);
+        --scope-tab: rgba(99, 102, 241, 0.14);
+        --scope-tab-text: #4f46e5;
+        --scope-window: rgba(13, 148, 136, 0.16);
+        --scope-window-text: #0f766e;
+        --scope-all: rgba(168, 85, 247, 0.16);
+        --scope-all-text: #7e22ce;
+        --r-sm: 6px;
+        --r-md: 10px;
+        --r-lg: 14px;
+      }
+      * {
+        box-sizing: border-box;
       }
       body {
         margin: 0;
-        font: 14px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        font: 13.5px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       }
       header {
-        padding: 14px 16px;
-        border-bottom: 1px solid rgba(127, 127, 127, 0.25);
-        display: flex;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        backdrop-filter: blur(12px);
+        background: color-mix(in srgb, Canvas 88%, transparent);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 18px;
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 14px;
         align-items: center;
-        justify-content: space-between;
-        gap: 12px;
       }
-      header h1 {
+      .brand {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+      }
+      .brand h1 {
         margin: 0;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 700;
+        letter-spacing: -0.01em;
       }
-      header .muted {
-        opacity: 0.75;
+      .brand .muted {
+        opacity: var(--muted);
+        font-size: 12px;
+      }
+      .searchWrap {
+        position: relative;
+        max-width: 520px;
+        width: 100%;
+        justify-self: center;
+      }
+      .searchWrap::before {
+        content: "🔍";
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        opacity: 0.55;
         font-size: 13px;
       }
-      main {
-        display: grid;
-        grid-template-columns: 360px 1fr;
-        min-height: calc(100vh - 54px);
+      input[type="text"],
+      input[type="search"] {
+        width: 100%;
+        padding: 9px 12px 9px 34px;
+        border-radius: 10px;
+        border: 1px solid var(--border-strong);
+        background: var(--bg-elev);
+        font: inherit;
+        color: inherit;
       }
-      aside {
-        border-right: 1px solid rgba(127, 127, 127, 0.25);
-        padding: 12px;
-        overflow: auto;
+      input[type="search"] {
+        padding-top: 11px;
+        padding-bottom: 11px;
       }
-      section {
-        padding: 12px;
-        overflow: auto;
+      input[type="search"]:focus {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px var(--accent-ring);
       }
-      .toolbar {
+      .topActions {
         display: flex;
         gap: 8px;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 10px;
+        flex-wrap: wrap;
+      }
+      .segmented {
+        display: inline-flex;
+        border: 1px solid var(--border-strong);
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--bg-elev);
+      }
+      .segmented button {
+        border: none;
+        background: transparent;
+        padding: 7px 12px;
+        cursor: pointer;
+        font: inherit;
+        font-weight: 600;
+        color: inherit;
+        border-radius: 0;
+      }
+      .segmented button + button {
+        border-left: 1px solid var(--border);
+      }
+      .segmented button.active {
+        background: var(--accent);
+        color: var(--on-accent);
       }
       button {
         appearance: none;
-        border: 1px solid rgba(127, 127, 127, 0.35);
-        background: rgba(127, 127, 127, 0.10);
+        border: 1px solid var(--border-strong);
+        background: var(--bg-elev);
         border-radius: 10px;
-        padding: 8px 10px;
-        font-weight: 650;
-        cursor: pointer;
-      }
-      button:disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-      }
-      input[type="text"] {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 9px 10px;
-        border-radius: 10px;
-        border: 1px solid rgba(127, 127, 127, 0.35);
-        background: rgba(127, 127, 127, 0.06);
+        padding: 8px 12px;
         font: inherit;
-      }
-      .sessionList {
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-      }
-      .sessionItem {
-        border: 1px solid rgba(127, 127, 127, 0.25);
-        background: rgba(127, 127, 127, 0.06);
-        border-radius: 12px;
-        padding: 10px;
+        font-weight: 600;
         cursor: pointer;
-      }
-      .sessionItem.active {
-        outline: 2px solid rgba(80, 140, 255, 0.55);
-      }
-      .sessionItem .name {
-        font-weight: 700;
-        margin-bottom: 4px;
-        word-break: break-word;
-      }
-      .sessionItem .meta {
-        opacity: 0.75;
-        font-size: 12px;
-      }
-      .detailHeader {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 10px;
-      }
-      .detailHeader h2 {
-        margin: 0;
-        font-size: 16px;
-      }
-      .pillRow {
-        margin-top: 6px;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .pill {
-        display: inline-block;
-        padding: 2px 8px;
-        border-radius: 999px;
-        border: 1px solid rgba(127, 127, 127, 0.25);
-        background: rgba(127, 127, 127, 0.08);
-        font-size: 12px;
-        opacity: 0.95;
-      }
-      .tabsList {
-        margin-top: 12px;
-        border: 1px solid rgba(127, 127, 127, 0.22);
-        border-radius: 12px;
-        padding: 10px;
-        background: rgba(127, 127, 127, 0.05);
-        max-width: 980px;
-      }
-      .tabItem {
-        padding: 8px 0;
-        border-bottom: 1px solid rgba(127, 127, 127, 0.18);
-        display: grid;
-        grid-template-columns: 1fr auto;
-        gap: 10px;
-        align-items: start;
-      }
-      .tabItem:last-child {
-        border-bottom: none;
-      }
-      .t {
-        font-weight: 650;
-        margin-bottom: 3px;
-        word-break: break-word;
-        text-decoration: none;
         color: inherit;
       }
-      .u {
+      button:hover:not(:disabled) {
+        background: var(--bg-hover);
+      }
+      button.primary {
+        background: var(--accent);
+        color: var(--on-accent);
+        border-color: transparent;
+      }
+      button.primary:hover:not(:disabled) {
+        background: var(--accent-strong);
+      }
+      button.danger:hover:not(:disabled) {
+        color: var(--danger);
+        background: var(--danger-soft);
+        border-color: var(--danger-soft);
+      }
+      button:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+      }
+      main {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        min-height: calc(100vh - 64px);
+      }
+      aside {
+        border-right: 1px solid var(--border);
+        overflow: auto;
+        max-height: calc(100vh - 64px);
+      }
+      section {
+        padding: 18px 22px;
+        overflow: auto;
+        max-height: calc(100vh - 64px);
+      }
+      .groupHeader {
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: color-mix(in srgb, Canvas 92%, transparent);
+        backdrop-filter: blur(10px);
+        padding: 10px 14px 6px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        opacity: 0.85;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--border);
+        cursor: pointer;
+        user-select: none;
+      }
+      .groupHeader:hover {
+        opacity: 1;
+      }
+      .groupHeader .chevron {
+        font-size: 10px;
+        margin-right: 6px;
+        transition: transform 150ms ease;
+        display: inline-block;
+      }
+      .groupHeader.collapsed .chevron {
+        transform: rotate(-90deg);
+      }
+      .groupBody {
+        overflow: hidden;
+      }
+      .groupBody.collapsed {
+        display: none;
+      }
+      .groupHeader .count {
+        display: inline-block;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 11px;
+        padding: 1px 8px;
+        border-radius: 999px;
+        font-weight: 700;
+      }
+      .sessionHeader {
+        position: sticky;
+        top: 36px;
+        z-index: 0;
+        background: color-mix(in srgb, Canvas 94%, transparent);
+        backdrop-filter: blur(8px);
+        padding: 7px 14px 6px 22px;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        border-bottom: 1px solid var(--border);
+      }
+      .sessionHeader .sessionName {
+        font-weight: 650;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .sessionHeader .sessionMeta {
+        font-size: 11px;
+        opacity: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        flex: 0 0 auto;
+      }
+      .tabRow {
+        display: grid;
+        grid-template-columns: 18px 1fr;
+        gap: 10px;
+        align-items: center;
+        padding: 9px 14px;
+        cursor: pointer;
+        border-left: 3px solid transparent;
+        border-bottom: 1px solid var(--border);
+      }
+      .tabRow.nested {
+        padding-left: 26px;
+      }
+      .tabRow:hover {
+        background: var(--bg-hover);
+      }
+      .tabRow.active {
+        background: var(--accent-soft);
+        border-left-color: var(--accent);
+      }
+      .tabRow .fav {
+        width: 16px;
+        height: 16px;
+        flex: 0 0 16px;
+        border-radius: 3px;
+      }
+      .tabRow .body {
+        min-width: 0;
+      }
+      .tabRow .t {
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .tabRow .u {
+        font-size: 12px;
+        opacity: var(--muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      .empty {
+        opacity: var(--muted);
+        padding: 18px 14px;
+      }
+      .detailCard {
+        border: 1px solid var(--border);
+        border-radius: var(--r-lg);
+        padding: 16px 18px;
+        background: var(--bg-elev);
+        margin-bottom: 14px;
+        max-width: 760px;
+      }
+      .detailCard h2 {
+        margin: 0 0 6px;
+        font-size: 15px;
+        word-break: break-word;
+      }
+      .detailCard .url {
         font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: 12px;
         opacity: 0.85;
         word-break: break-all;
-        text-decoration: none;
-        color: inherit;
+        margin-bottom: 12px;
       }
-      .tabActions {
+      .tabHead {
+        display: grid;
+        grid-template-columns: 32px 1fr;
+        gap: 12px;
+        align-items: start;
+        margin-bottom: 8px;
+      }
+      .tabHead .favLg {
+        width: 32px;
+        height: 32px;
+        border-radius: var(--r-sm);
+        background: var(--bg-elev);
+        font-size: 22px;
+        line-height: 32px;
+        text-align: center;
+      }
+      .tabHead .body {
+        min-width: 0;
+      }
+      .detailCard .label {
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        font-size: 10.5px;
+        font-weight: 700;
+        opacity: var(--muted);
+        margin-bottom: 4px;
+      }
+      .pill.scope-currentTab {
+        background: var(--scope-tab);
+        color: var(--scope-tab-text);
+        border-color: transparent;
+      }
+      .pill.scope-currentWindow {
+        background: var(--scope-window);
+        color: var(--scope-window-text);
+        border-color: transparent;
+      }
+      .pill.scope-allWindows {
+        background: var(--scope-all);
+        color: var(--scope-all-text);
+        border-color: transparent;
+      }
+      .emptyState .heading {
+        font-weight: 650;
+        font-size: 14px;
+        margin-bottom: 4px;
+        opacity: 0.85;
+      }
+      .emptyState .helper {
+        font-size: 12.5px;
+        opacity: var(--muted);
+      }
+      .detailCard .actions {
         display: flex;
-        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
       }
-      .iconBtn {
-        width: 30px;
-        height: 30px;
-        border-radius: 10px;
-        border: 1px solid rgba(127, 127, 127, 0.3);
-        background: rgba(127, 127, 127, 0.08);
-        cursor: pointer;
-        font-weight: 800;
-        line-height: 1;
+      .pillRow {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+        margin: 8px 0 12px;
       }
-      .iconBtn:hover {
-        background: rgba(127, 127, 127, 0.14);
+      .pill {
+        display: inline-block;
+        padding: 2px 9px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--bg-elev);
+        font-size: 12px;
       }
       .status {
         margin-top: 10px;
         min-height: 20px;
         opacity: 0.85;
+        font-size: 13px;
       }
-      .empty {
-        opacity: 0.75;
-        padding: 10px 0;
+      kbd {
+        font: 11px ui-monospace, monospace;
+        padding: 1px 6px;
+        border: 1px solid var(--border-strong);
+        border-bottom-width: 2px;
+        border-radius: 4px;
+        background: var(--bg-elev);
       }
-      @media (max-width: 900px) {
+      @media (max-width: 920px) {
         main {
           grid-template-columns: 1fr;
         }
         aside {
           border-right: none;
-          border-bottom: 1px solid rgba(127, 127, 127, 0.25);
+          border-bottom: 1px solid var(--border);
+          max-height: 50vh;
+        }
+        header {
+          grid-template-columns: 1fr;
+        }
+        .searchWrap {
+          justify-self: stretch;
         }
       }
     </style>
   </head>
   <body>
     <header>
-      <div>
-        <h1>TabCache Sessions</h1>
-        <div class="muted">Saved locally in this browser profile</div>
+      <div class="brand">
+        <h1>TabCache</h1>
+        <span class="muted" id="countLabel"></span>
       </div>
-      <button id="refresh">Refresh</button>
+      <div class="searchWrap">
+        <input
+          id="search"
+          type="search"
+          placeholder="Search all saved tabs by title or URL…   ( press / to focus )"
+          autocomplete="off"
+          spellcheck="false"
+        />
+      </div>
+      <div class="topActions">
+        <div class="segmented" role="tablist" aria-label="View mode">
+          <button id="viewDate" class="active" data-view="date" type="button">📅 By Date</button>
+          <button id="viewDomain" data-view="domain" type="button">🌐 By Domain</button>
+          <button id="viewSmart" data-view="smart" type="button" style="display:none">🤖 Smart</button>
+        </div>
+        <button id="dedupe" class="primary" type="button" title="Remove duplicate URLs across all sessions">
+          ✨ Remove Duplicates
+        </button>
+        <button id="refresh" type="button" title="Reload from storage">⟳</button>
+        <a id="openSettings" href="#" title="AI Settings" style="font-size:18px;text-decoration:none;cursor:pointer;margin-left:4px">⚙</a>
+      </div>
     </header>
 
     <main>
-      <aside>
-        <div class="toolbar">
-          <div class="muted" id="countLabel"></div>
-        </div>
-        <div class="sessionList" id="sessionList"></div>
-      </aside>
-
+      <aside id="sidebar"></aside>
       <section>
         <div id="detail"></div>
         <div class="status" id="status"></div>
@@ -218,4 +456,3 @@
     <script src="sessions.js"></script>
   </body>
 </html>
-
